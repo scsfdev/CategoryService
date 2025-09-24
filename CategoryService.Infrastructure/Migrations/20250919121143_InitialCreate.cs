@@ -1,0 +1,66 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace CategoryService.Infrastructure.Migrations
+{
+    /// <inheritdoc />
+    public partial class InitialCreate : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2(0)", nullable: false, defaultValueSql: "GETDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.UniqueConstraint("AK_Categories_CategoryGuid", x => x.CategoryGuid);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PhotoCategories",
+                columns: table => new
+                {
+                    PhotoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategoryGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PhotoCategories", x => new { x.PhotoGuid, x.CategoryGuid });
+                    table.ForeignKey(
+                        name: "FK_PhotoCategories_Categories_CategoryGuid",
+                        column: x => x.CategoryGuid,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryGuid",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PhotoCategories_CategoryGuid",
+                table: "PhotoCategories",
+                column: "CategoryGuid");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "PhotoCategories");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+        }
+    }
+}
