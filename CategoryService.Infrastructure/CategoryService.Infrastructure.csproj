@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <Reference Include="ValidateCategoryEvents">
-      <HintPath>..\..\ValidateCategoryEvents\ValidateCategoryEvents\bin\Debug\net9.0\ValidateCategoryEvents.dll</HintPath>
+      <HintPath>..\..\ValidateCategoryEvents\ValidateCategoryEvents\bin\Release\net9.0\ValidateCategoryEvents.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -6,8 +6,9 @@ namespace CategoryService.Domain.Interfaces
     {
         Task<IEnumerable<Category>> GetAllAsync();
         Task<Category?> GetByGuidAsync(Guid categoryGuid);
+        Task<List<Category>> GetCategoriesByIdsAsync(Guid[] ids);
         Task CreateAsync(Category categoryCreate);
-        Task UpdateAsync(Guid categoryGuid, Category categoryUpdate);
+        Task UpdateAsync(Category categoryUpdate);
         Task DeleteAsync(Category category);
         Task<bool> SaveChangesAsync();
     }

@@ -10,7 +10,10 @@ namespace CategoryService.Application.Mapping
         {
             CreateMap<Category, CategoryDto>();
 
-            CreateMap<CategoryCreateDto, Category>();
+            CreateMap<CategoryWriteDto, Category>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); ;
+
+            CreateMap<Category, CategoryMinimalDto>();
         }
     }
 }

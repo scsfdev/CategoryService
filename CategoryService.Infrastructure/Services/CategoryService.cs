@@ -17,6 +17,11 @@ namespace CategoryService.Infrastructure.Services
             return await repository.GetByGuidAsync(categoryGuid);
         }
 
+        public async Task<List<Category>> GetCategoriesByIdsAsync(Guid[] ids)
+        {
+            return await repository.GetCategoriesByIdsAsync(ids);
+        }
+
         public async Task<Category> CreateCategoryAsync(Category category)
         {
             await repository.CreateAsync(category);
@@ -26,10 +31,14 @@ namespace CategoryService.Infrastructure.Services
 
         public async Task<bool> UpdateCategoryAsync(Guid categoryGuid, Category category)
         {
-            var cat = await repository.GetByGuidAsync(categoryGuid);
-            if(cat == null) return false;
+            var existingCategory = await repository.GetByGuidAsync(categoryGuid);
+            if(existingCategory == null) return false;
 
-            await repository.UpdateAsync(categoryGuid, category);
+            existingCategory.Title = category.Title;
+            existingCategory.Description = category.Description;
+            existingCategory.UpdatedAt = DateTime.UtcNow;  // Update the DT stamp.
+
+            await repository.UpdateAsync(existingCategory);
             
             return await repository.SaveChangesAsync();
         }
@@ -42,6 +51,6 @@ namespace CategoryService.Infrastructure.Services
             await repository.DeleteAsync(category);
             return await repository.SaveChangesAsync();
         }
-
+       
     }
 }

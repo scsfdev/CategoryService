@@ -1,23 +1,20 @@
-﻿using CategoryService.Infrastructure.Data;
+﻿using CategoryService.Infrastructure.Configuration;
+using CategoryService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 using ValidateCategoryEvents;
 
 
 namespace CategoryService.Infrastructure.Services
 {
-    public class CategoryValidationSubscriber(ILogger<CategoryValidationSubscriber> logger, IServiceProvider serviceProvider) : BackgroundService
+    public class CategoryValidationSubscriber(ILogger<CategoryValidationSubscriber> logger, IOptions<RabbitMQSettings> options, IServiceProvider serviceProvider) : BackgroundService
     {
         private IConnection connection = null!;
         private IChannel channel = null!;
@@ -28,10 +25,10 @@ namespace CategoryService.Infrastructure.Services
         {
             var factory = new ConnectionFactory()
             {
-                HostName = "localhost", // Replace with your RabbitMQ server hostname
-                Port = 5672,            // Replace with your RabbitMQ server port
-                UserName = "guest",     // Replace with your RabbitMQ username
-                Password = "guest"      // Replace with your RabbitMQ password
+                HostName = options.Value.HostName,
+                Port = options.Value.Port,            
+                UserName = options.Value.UserName,
+                Password = options.Value.Password
             };
             connection = await factory.CreateConnectionAsync();
             channel = await connection.CreateChannelAsync();

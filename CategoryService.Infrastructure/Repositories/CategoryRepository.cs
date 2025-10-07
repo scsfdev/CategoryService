@@ -17,6 +17,14 @@ namespace CategoryService.Infrastructure.Repositories
             return await categoryDb.Categories.FirstOrDefaultAsync(c => c.CategoryGuid == categoryGuid);
         }
 
+        public async Task<List<Category>> GetCategoriesByIdsAsync(Guid[] ids)
+        {
+            return await categoryDb.Categories
+                .Where(c => ids.Contains(c.CategoryGuid))
+                .ToListAsync();
+        }
+
+
         public async Task CreateAsync(Category categoryCreateDto)
         {
             await categoryDb.Categories.AddAsync(categoryCreateDto);
@@ -30,7 +38,7 @@ namespace CategoryService.Infrastructure.Repositories
             return Task.CompletedTask;
         }
 
-        public Task UpdateAsync(Guid categoryGuid, Category categoryUpdateDto)
+        public Task UpdateAsync(Category categoryUpdateDto)
         {
             categoryDb.Categories.Update(categoryUpdateDto);
             return Task.CompletedTask;

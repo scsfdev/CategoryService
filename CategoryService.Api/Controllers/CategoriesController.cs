@@ -9,30 +9,51 @@ namespace CategoryService.Api.Controllers
     {
         // GET: api/categories
         [HttpGet]
-        public async Task<ActionResult<List<CategoryDto>>> GetAllCategories()
+        public async Task<ActionResult<IEnumerable<CategoryMinimalDto>>> GetAllCategories()
         {
             var categories = await categoryService.GetAllCategoriesAsync();
-            var categoriesDto = mapper.Map<List<CategoryDto>>(categories);
-            return categoriesDto;      // return 200 OK with the list of categories
+            var categoriesDto = mapper.Map<IEnumerable<CategoryMinimalDto>>(categories);
+            return Ok(categoriesDto);      // return 200 OK with the list of categories
         }
 
         // GET: api/categories/{categoryGuid}
         [HttpGet("{categoryGuid}")]
-        public async Task<ActionResult<CategoryDto>> GetCategoryDetail([FromRoute] Guid categoryGuid)
+        public async Task<ActionResult<CategoryMinimalDto>> GetCategoryDetail([FromRoute] Guid categoryGuid)
         {
             var category = await categoryService.GetCategoryByGuidAsync(categoryGuid);
             if (category is null)
             {
                 return NotFound();      // return 404 Not Found if the category does not exist
             }
-            var categoryDto = mapper.Map<CategoryDto>(category);
+            var categoryMinDto = mapper.Map<CategoryMinimalDto>(category);
 
-            return Ok(categoryDto);    // return 200 OK with the category details
+            return Ok(categoryMinDto);    // return 200 OK with the category details
         }
+
+
+        // Batch endpoint to get categories by multiple IDs
+        [HttpGet("byIds")]
+        public async Task<ActionResult<IEnumerable<CategoryBffDto>>> GetCategoriesByIds([FromQuery] Guid[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+                return BadRequest("No category IDs provided");
+
+            var categories = await categoryService.GetCategoriesByIdsAsync(ids);
+
+            var result = categories.Select(c => new CategoryBffDto
+            {
+                CategoryGuid = c.CategoryGuid,
+                Title = c.Title
+            }).ToList();
+
+            return Ok(result);
+        }
+
+
 
         // POST: api/categories
         [HttpPost]
-        public async Task<ActionResult> CreateCategory([FromBody] CategoryCreateDto categoryCreateDto)
+        public async Task<ActionResult> CreateCategory([FromBody] CategoryWriteDto categoryCreateDto)
         {
             if(!ModelState.IsValid)
             {
@@ -41,21 +62,23 @@ namespace CategoryService.Api.Controllers
 
             var category = mapper.Map<Domain.Entities.Category>(categoryCreateDto);
             var createdCategory = await categoryService.CreateCategoryAsync(category);
-            var categoryDto = mapper.Map<CategoryDto>(createdCategory);
+            var categoryMinDto = mapper.Map<CategoryMinimalDto>(createdCategory);
 
             return CreatedAtAction(nameof(GetCategoryDetail), 
-                new { categoryGuid = categoryDto.CategoryGuid },
-                categoryDto);       // return 201 Created with the location of the new category
+                new { categoryGuid = categoryMinDto.CategoryGuid },
+                categoryMinDto);       // return 201 Created with the location of the new category
         }
+
 
         // POST: api/categories/{categoryGuid}
         [HttpPut("{categoryGuid}")]
-        public async Task<ActionResult<CategoryDto>> UpdateCategory([FromRoute] Guid categoryGuid, [FromBody] CategoryCreateDto categoryUpdateDto)
+        public async Task<ActionResult> UpdateCategory([FromRoute] Guid categoryGuid, [FromBody] CategoryWriteDto categoryUpdateDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);      // return 400 Bad Request if the model state is invalid
             }
+
             var category = mapper.Map<Domain.Entities.Category>(categoryUpdateDto);
             var updatedCategory = await categoryService.UpdateCategoryAsync(categoryGuid, category);
             if (!updatedCategory)
@@ -65,6 +88,7 @@ namespace CategoryService.Api.Controllers
 
             return NoContent();   // return 204 No Content to indicate the update was successful
         }
+
 
         // DELETE: api/categories/{categoryGuid}
         [HttpDelete("{categoryGuid}")]

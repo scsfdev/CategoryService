@@ -1,11 +1,16 @@
-using CategoryService.Application.Mapping;
 using CategoryService.Application.Interfaces;
+using CategoryService.Application.Mapping;
+using CategoryService.Domain.Interfaces;
+using CategoryService.Infrastructure.Configuration;
 using CategoryService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using CategoryService.Domain.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<RabbitMQSettings>(
+    builder.Configuration.GetSection("RabbitMQ")
+);
 
 
 // Register DbContext with SQL Server provider.
@@ -14,6 +19,7 @@ builder.Services.AddDbContext<CategoryDbContext>(options =>
 
 // Register repository (from Infrastructure Layer)
 builder.Services.AddScoped<ICategoryRepository, CategoryService.Infrastructure.Repositories.CategoryRepository>();
+
 
 // Register service (from Application Layer)
 builder.Services.AddScoped<ICategoryService, CategoryService.Infrastructure.Services.CategoryService>();
