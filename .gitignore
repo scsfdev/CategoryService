@@ -483,3 +483,5 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 CategoryService.Api/appsettings.json
+CategoryService.IntegrationTests/
+CategoryService.UnitTests/
