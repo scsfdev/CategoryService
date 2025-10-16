@@ -1,6 +1,6 @@
 ﻿using CategoryService.Domain.Entities;
 
-namespace CategoryService.Domain.Interfaces
+namespace CategoryService.Application.Interfaces.Repositories
 {
     public interface ICategoryRepository
     {

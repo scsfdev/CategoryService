@@ -1,9 +1,8 @@
-﻿using CategoryService.Application.Interfaces;
+﻿using CategoryService.Application.Interfaces.Repositories;
+using CategoryService.Application.Interfaces.Services;
 using CategoryService.Domain.Entities;
-using CategoryService.Domain.Interfaces;
 
-
-namespace CategoryService.Infrastructure.Services
+namespace CategoryService.Application.Services
 {
     public class CategoryService(ICategoryRepository repository) : ICategoryService
     {

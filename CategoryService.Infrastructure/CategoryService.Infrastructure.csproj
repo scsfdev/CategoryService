@@ -19,8 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ValidateCategoryEvents">
-      <HintPath>..\..\ValidateCategoryEvents\ValidateCategoryEvents\bin\Release\net9.0\ValidateCategoryEvents.dll</HintPath>
+    <Reference Include="Shared.Events">
+      <HintPath>..\..\Shared.Events\Shared.Events\bin\Release\net9.0\Shared.Events.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
 

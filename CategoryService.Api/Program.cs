@@ -1,9 +1,12 @@
-using CategoryService.Application.Interfaces;
+using CategoryService.Application.Interfaces.Repositories;
+using CategoryService.Application.Interfaces.Services;
 using CategoryService.Application.Mapping;
-using CategoryService.Domain.Interfaces;
 using CategoryService.Infrastructure.Configuration;
 using CategoryService.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +25,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryService.Infrastructure.R
 
 
 // Register service (from Application Layer)
-builder.Services.AddScoped<ICategoryService, CategoryService.Infrastructure.Services.CategoryService>();
+builder.Services.AddScoped<ICategoryService, CategoryService.Application.Services.CategoryService>();
 
 
 // Register AutoMapper
@@ -39,6 +42,31 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+// Authentication & Authorization
+builder.Services.AddAuthentication(opts =>
+{
+    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+
+        };
+    });
+builder.Services.AddAuthorization();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,7 +77,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -4,13 +4,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# ---------- 1. Build ValidateCategoryEvents ----------
-COPY ValidateCategoryEvents/ValidateCategoryEvents.sln ValidateCategoryEvents/
-COPY ValidateCategoryEvents/ValidateCategoryEvents/ValidateCategoryEvents.csproj ValidateCategoryEvents/ValidateCategoryEvents/
-COPY ValidateCategoryEvents/ValidateCategoryEvents/ ValidateCategoryEvents/ValidateCategoryEvents/
+# ---------- 1. Build Shared.Events ----------
+COPY Shared.Events/Shared.Events.sln Shared.Events/
+COPY Shared.Events/Shared.Events/Shared.Events.csproj Shared.Events/Shared.Events/
+COPY Shared.Events/Shared.Events/ Shared.Events/Shared.Events/
 
-# Build ValidateCategoryEvents
-RUN dotnet publish ValidateCategoryEvents/ValidateCategoryEvents/ValidateCategoryEvents.csproj -c Release -o ValidateCategoryEvents/ValidateCategoryEvents/bin/Release/net9.0 --no-self-contained
+# Build Shared.Events
+RUN dotnet publish Shared.Events/Shared.Events/Shared.Events.csproj -c Release -o Shared.Events/Shared.Events/bin/Release/net9.0 --no-self-contained
 
 # ---------- 2. Build CategoryService ----------
 # Copy solution and project files for restore caching

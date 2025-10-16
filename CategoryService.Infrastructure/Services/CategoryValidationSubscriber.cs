@@ -9,7 +9,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
-using ValidateCategoryEvents;
+using Shared.Events;
 
 
 namespace CategoryService.Infrastructure.Services

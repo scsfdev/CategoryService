@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CategoryService.Application.DTOs;
-using CategoryService.Application.Interfaces;
+using CategoryService.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CategoryService.Api.Controllers
@@ -52,6 +53,7 @@ namespace CategoryService.Api.Controllers
 
 
         // POST: api/categories
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateCategory([FromBody] CategoryWriteDto categoryCreateDto)
         {
@@ -71,6 +73,7 @@ namespace CategoryService.Api.Controllers
 
 
         // POST: api/categories/{categoryGuid}
+        [Authorize(Roles = "Admin")]
         [HttpPut("{categoryGuid}")]
         public async Task<ActionResult> UpdateCategory([FromRoute] Guid categoryGuid, [FromBody] CategoryWriteDto categoryUpdateDto)
         {
@@ -91,6 +94,7 @@ namespace CategoryService.Api.Controllers
 
 
         // DELETE: api/categories/{categoryGuid}
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{categoryGuid}")]
         public async Task<ActionResult> DeleteCategory([FromRoute] Guid categoryGuid)
         {

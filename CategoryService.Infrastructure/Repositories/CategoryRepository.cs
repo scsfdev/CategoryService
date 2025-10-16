@@ -1,4 +1,4 @@
-﻿using CategoryService.Domain.Interfaces;
+﻿using CategoryService.Application.Interfaces.Repositories;
 using CategoryService.Domain.Entities;
 using CategoryService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
